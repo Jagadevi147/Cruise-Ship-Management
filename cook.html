@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Head Cook Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>Head Cook - Catering Orders</h2>
+    <div id="orders"></div>
+
+    <script>
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          db.collection("cateringOrders")
+            .get()
+            .then((snapshot) => {
+              let html = "<ul>";
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                html += `<li>${data.item} - Ordered by ${data.userId}</li>`;
+              });
+              html += "</ul>";
+              document.getElementById("orders").innerHTML = html;
+            });
+        } else {
+          alert("Please login!");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Supervisor Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>Supervisor - Stationery Orders</h1>
+    <div id="orders"></div>
+    <button onclick="goTo('index.html')">Logout</button>
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          fetchOrders();
+        } else {
+          alert("Please login as Supervisor.");
+        }
+      });
+
+      function fetchOrders() {
+        const ordersDiv = document.getElementById("orders");
+        db.collection("stationeryOrders")
+          .get()
+          .then((snapshot) => {
+            if (snapshot.empty) {
+              ordersDiv.innerHTML = "<p>No stationery orders found.</p>";
+              return;
+            }
+
+            let html = "<ul>";
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              html += `<li><b>User ID:</b> ${data.userId} | <b>Item:</b> ${data.item}</li>`;
+            });
+            html += "</ul>";
+            ordersDiv.innerHTML = html;
+          });
+      }
+    </script>
+  </body>
+</html>

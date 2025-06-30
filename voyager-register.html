@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Voyager Registration</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>Voyager Registration</h1>
+
+    <input type="text" id="name" placeholder="Full Name" /><br /><br />
+    <input type="email" id="email" placeholder="Email" /><br /><br />
+    <input type="password" id="password" placeholder="Password" /><br /><br />
+    <button onclick="registerVoyager()">Register</button><br /><br />
+    <button onclick="goTo('index.html')">Back to Home</button>
+
+    <script>
+      function registerVoyager() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (!name || !email || !password) {
+          alert("Please fill all fields.");
+          return;
+        }
+
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then((cred) => {
+            return db.collection("voyagers").doc(cred.user.uid).set({
+              name: name,
+              email: email,
+              userId: cred.user.uid,
+            });
+          })
+          .then(() => {
+            alert("Registration successful!");
+            window.location.href = "voyager-login.html";
+          })
+          .catch((err) => {
+            alert("Error: " + err.message);
+          });
+      }
+
+      function goTo(page) {
+        window.location.href = page;
+      }
+    </script>
+  </body>
+</html>

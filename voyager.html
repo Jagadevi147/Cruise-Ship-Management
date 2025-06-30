@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Service Booking</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>Service Booking</h1>
+
+    <h3>Book Movie</h3>
+    <input type="text" id="movieName" placeholder="Movie Name" />
+    <button onclick="bookMovie()">Book</button><br /><br />
+
+    <h3>Book Salon</h3>
+    <input type="text" id="salonType" placeholder="e.g., Haircut" />
+    <button onclick="bookSalon()">Book</button><br /><br />
+
+    <h3>Book Fitness Center</h3>
+    <input type="text" id="fitnessEquip" placeholder="e.g., Treadmill" />
+    <button onclick="bookFitness()">Book</button><br /><br />
+
+    <h3>Book Party Hall</h3>
+    <input type="text" id="partyType" placeholder="e.g., Birthday Party" />
+    <button onclick="bookParty()">Book</button><br /><br />
+
+    <button onclick="goTo('voyager-dashboard.html')">Back to Dashboard</button>
+
+    <script>
+      function bookMovie() {
+        const detail = document.getElementById("movieName").value;
+        const user = auth.currentUser;
+
+        if (!user || !detail) {
+          alert("Please login and fill all fields.");
+          return;
+        }
+
+        db.collection("movieBookings")
+          .add({ userId: user.uid, detail: detail })
+          .then(() => alert("Movie booked"));
+      }
+
+      function bookSalon() {
+        const detail = document.getElementById("salonType").value;
+        const user = auth.currentUser;
+
+        if (!user || !detail) {
+          alert("Please login and fill all fields.");
+          return;
+        }
+
+        db.collection("salonBookings")
+          .add({ userId: user.uid, detail: detail })
+          .then(() => alert("Salon booked"));
+      }
+
+      function bookFitness() {
+        const detail = document.getElementById("fitnessEquip").value;
+        const user = auth.currentUser;
+
+        if (!user || !detail) {
+          alert("Please login and fill all fields.");
+          return;
+        }
+
+        db.collection("fitnessBookings")
+          .add({ userId: user.uid, detail: detail })
+          .then(() => alert("Fitness booked"));
+      }
+
+      function bookParty() {
+        const detail = document.getElementById("partyType").value;
+        const user = auth.currentUser;
+
+        if (!user || !detail) {
+          alert("Please login and fill all fields.");
+          return;
+        }
+
+        db.collection("partyBookings")
+          .add({ userId: user.uid, detail: detail })
+          .then(() => alert("Party Hall booked"));
+      }
+
+      function goTo(page) {
+        window.location.href = page;
+      }
+    </script>
+  </body>
+</html>

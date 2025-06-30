@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>Admin Dashboard</h2>
+
+    <!-- Add Item -->
+    <h3>Add Menu Item</h3>
+    <input type="text" id="itemName" placeholder="Item Name" />
+    <input type="text" id="itemType" placeholder="Type (catering/stationery)" />
+    <button onclick="addItem()">Add Item</button>
+
+    <!-- View & Edit/Delete -->
+    <h3>Menu Items</h3>
+    <div id="itemsList"></div>
+
+    <!-- Voyager Registrations -->
+    <h3>Voyager Registrations</h3>
+    <div id="voyagersList"></div>
+
+    <script>
+      // Firebase Configuration
+
+      // Auto fetch items and voyagers when logged in
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          fetchItems();
+          fetchVoyagers();
+        } else {
+          alert("Not logged in!");
+        }
+      });
+
+      // Add menu item
+      function addItem() {
+        const name = document.getElementById("itemName").value;
+        const type = document.getElementById("itemType").value.toLowerCase();
+
+        if (!name || !type) {
+          alert("Please enter both item name and type");
+          return;
+        }
+
+        db.collection("menuItems")
+          .add({ name, type })
+          .then(() => {
+            alert("Item added!");
+            fetchItems();
+          });
+      }
+
+      // Fetch menu items
+      function fetchItems() {
+        db.collection("menuItems")
+          .get()
+          .then((snapshot) => {
+            let html = "<ul>";
+            snapshot.forEach((doc) => {
+              const item = doc.data();
+              html += `<li>
+            ${item.name} [${item.type}]
+            <button onclick="editItem('${doc.id}', '${item.name}', '${item.type}')">Edit</button>
+            <button onclick="deleteItem('${doc.id}')">Delete</button>
+          </li>`;
+            });
+            html += "</ul>";
+            document.getElementById("itemsList").innerHTML = html;
+          });
+      }
+
+      // Delete item
+      function deleteItem(id) {
+        db.collection("menuItems")
+          .doc(id)
+          .delete()
+          .then(() => {
+            alert("Item deleted!");
+            fetchItems();
+          });
+      }
+
+      // Edit item
+      function editItem(id, oldName, oldType) {
+        const newName = prompt("Enter new name", oldName);
+        const newType = prompt("Enter new type (catering/stationery)", oldType);
+        if (newName && newType) {
+          db.collection("menuItems")
+            .doc(id)
+            .update({
+              name: newName,
+              type: newType.toLowerCase(),
+            })
+            .then(() => {
+              alert("Item updated!");
+              fetchItems();
+            });
+        }
+      }
+
+      // Fetch voyager users
+      function fetchVoyagers() {
+        db.collection("voyagers")
+          .get()
+          .then((snapshot) => {
+            let html = "<ul>";
+            snapshot.forEach((doc) => {
+              const user = doc.data();
+              html += `<li>${user.name} - ${user.email}</li>`;
+            });
+            html += "</ul>";
+            document.getElementById("voyagersList").innerHTML = html;
+          });
+      }
+    </script>
+  </body>
+</html>

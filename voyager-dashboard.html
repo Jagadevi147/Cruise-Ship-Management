@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Voyager Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Welcome to Voyager Dashboard</h1>
+
+    <p>Choose a service:</p>
+
+    <button onclick="goTo('voyager.html')">Book Services</button><br /><br />
+    <button onclick="goTo('order-catering.html')">Order Catering</button
+    ><br /><br />
+    <button onclick="goTo('order-stationery.html')">Order Stationery</button
+    ><br /><br />
+    <button onclick="goTo('book-details.html')">Book Details</button
+    ><br /><br />
+
+    <button onclick="goTo('index.html')">Logout</button>
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+    </script>
+  </body>
+</html>

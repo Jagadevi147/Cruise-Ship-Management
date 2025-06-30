@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>Manager Dashboard</h1>
+    <div id="output"></div>
+    <button onclick="goTo('index.html')">Logout</button>
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          loadBookings();
+        } else {
+          alert("Please log in as Manager first.");
+        }
+      });
+
+      function loadBookings() {
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "";
+
+        const collections = [
+          { name: "movieBookings", title: "🎬 Movie Bookings" },
+          { name: "salonBookings", title: "💇‍♀️ Salon Bookings" },
+          { name: "fitnessBookings", title: "🏋️‍♀️ Fitness Bookings" },
+          { name: "partyBookings", title: "🎉 Party Hall Bookings" },
+        ];
+
+        collections.forEach((col) => {
+          db.collection(col.name)
+            .get()
+            .then((snapshot) => {
+              let html = `<h2>${col.title}</h2><ul>`;
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                html += `<li><b>User ID:</b> ${data.userId} | <b>Detail:</b> ${
+                  data.detail || data.item
+                }</li>`;
+              });
+              html += "</ul><hr/>";
+              outputDiv.innerHTML += html;
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

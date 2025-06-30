@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>All Booking Details</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>All Booking Details</h1>
+    <div id="bookings"></div>
+    <button onclick="goTo('voyager-dashboard.html')">Back to Dashboard</button>
+
+    <script>
+      function goTo(page) {
+        window.location.href = page;
+      }
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          loadBookings(user.uid); // show only that voyager's bookings
+        } else {
+          alert("Please login first.");
+          goTo("voyager-login.html");
+        }
+      });
+
+      function loadBookings(uid) {
+        const collections = [
+          { name: "movieBookings", title: "🎬 Movie Bookings" },
+          { name: "salonBookings", title: "💇 Salon Bookings" },
+          { name: "fitnessBookings", title: "🏋 Fitness Bookings" },
+          { name: "partyBookings", title: "🎉 Party Hall Bookings" },
+          { name: "cateringOrders", title: "🍽️ Catering Orders" },
+          { name: "stationeryOrders", title: "📚 Stationery Orders" },
+        ];
+
+        const bookingsDiv = document.getElementById("bookings");
+        bookingsDiv.innerHTML = "";
+
+        collections.forEach((col) => {
+          db.collection(col.name)
+            .where("userId", "==", uid)
+            .get()
+            .then((snapshot) => {
+              if (!snapshot.empty) {
+                let html = `<h3>${col.title}</h3><ul>`;
+                snapshot.forEach((doc) => {
+                  const data = doc.data();
+                  html += `<li>${data.detail || data.item}</li>`;
+                });
+                html += "</ul><hr/>";
+                bookingsDiv.innerHTML += html;
+              }
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

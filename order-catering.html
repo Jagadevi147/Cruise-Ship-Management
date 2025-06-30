@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Order Catering</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+  </head>
+  <body>
+    <h1>Order Catering Items</h1>
+
+    <input type="text" id="cateringItem" placeholder="e.g., Pizza, Coffee" />
+    <button onclick="orderCatering()">Order</button><br /><br />
+
+    <button onclick="goTo('voyager-dashboard.html')">Back to Dashboard</button>
+
+    <script>
+      function orderCatering() {
+        const item = document.getElementById("cateringItem").value;
+        const user = auth.currentUser;
+
+        if (!user || !item) {
+          alert("Please login and enter item name.");
+          return;
+        }
+
+        db.collection("cateringOrders")
+          .add({ userId: user.uid, item: item, time: new Date() })
+          .then(() => alert("Catering item ordered successfully."));
+      }
+
+      function goTo(page) {
+        window.location.href = page;
+      }
+    </script>
+  </body>
+</html>
